@@ -1,15 +1,15 @@
 require 'socket'
 require 'timeout'
 
-module NET
+module NET #:nodoc:
 
   class NTP
 
-    VERSION = '1.0.0'
+    VERSION = '1.0.0' #:nodoc:
   
-    TIMEOUT = 60
+    TIMEOUT = 60 #:nodoc:
     
-    NTP_ADJ = 2208988800
+    NTP_ADJ = 2208988800 #:nodoc:
 
     MODE = {
           0    =>    'reserved',
@@ -19,13 +19,11 @@ module NET
           4    =>    'server',
           5    =>    'broadcast',
           6    =>    'reserved for NTP control message',
-          7    =>    'reserved for private use'
-    }
+          7    =>    'reserved for private use' }
     
     STRATUM = {
           0    =>    'unspecified or unavailable',
-          1    =>    'primary reference (e.g., radio clock)'
-    }
+          1    =>    'primary reference (e.g., radio clock)' }
     
     2.upto(15) do |i|
         STRATUM[i] = 'secondary reference (via NTP or SNTP)'
@@ -50,15 +48,13 @@ module NET
         'LORC'  => 'LORAN-C radionavigation system',
         'OMEG'  => 'OMEGA radionavigation system',
         'GPS'   => 'Global Positioning Service',
-        'GOES'  => 'Geostationary Orbit Environment Satellite'
-    }
+        'GOES'  => 'Geostationary Orbit Environment Satellite' }
     
     LEAP_INDICATOR = {
           0    =>     'no warning',
           1    =>     'last minute has 61 seconds',
           2    =>     'last minute has 59 seconds)',
-          3    =>     'alarm condition (clock not synchronized)'
-    }
+          3    =>     'alarm condition (clock not synchronized)' }
     
     def NTP.frac2bin(frac)
         bin  = ''
@@ -92,6 +88,10 @@ module NET
     private_class_method :frac2bin, :bin2frac, :unpack_ip
 
     public
+
+      ###
+      # Sends an NTP datagram to the specified NTP server and returns
+      # a hash based upon RFC1305 and RFC2030.
 
       def NTP.get_ntp_response(host="pool.ntp.org", port="ntp")
       
