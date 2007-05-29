@@ -4,6 +4,8 @@ require 'timeout'
 module NET
 
   class NTP
+
+    VERSION = '1.0.0'
   
     TIMEOUT = 60
     

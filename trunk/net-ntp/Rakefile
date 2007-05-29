@@ -2,9 +2,9 @@
 
 require 'rubygems'
 require 'hoe'
-require './lib/net-ntp.rb'
+require './lib/ntp.rb'
 
-Hoe.new('net-ntp', NetNtp::VERSION) do |p|
+Hoe.new('ntp', NET::NTP::VERSION) do |p|
   p.rubyforge_name = 'net-ntp'
   p.author = 'Jerome Waibel'
   p.summary = 'Send a packet to an NTP server and decode packet received as outlined in RFC1305 and RFC2030'

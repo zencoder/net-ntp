@@ -2,6 +2,6 @@ History.txt
 Manifest.txt
 README.txt
 Rakefile
-bin/net-ntp
-lib/net-ntp.rb
-test/test_net-ntp.rb
+bin/ntp
+lib/ntp.rb
+test/test_ntp.rb
