@@ -13,19 +13,19 @@ hash based upon RFC1305 and RFC2030.
   
 == SYNOPSIS:
 
-require 'ntp'
-
-ntpresult = NET::NTP::get_ntp_response("de.pool.ntp.org")
-printf "Current epoch time: %f\n", ntpresult["Receive Timestamp"]
-printf "This is %s\n", Time.at(ntpresult["Receive Timestamp"])
-printf "Stratum: %d (%s)\n",
- ntpresult["Stratum"], NET::NTP::STRATUM[ntpresult["Stratum"]]
+  require 'ntp'
+  
+  ntpresult = NET::NTP::get_ntp_response("de.pool.ntp.org")
+  printf "Current epoch time: %f\n", ntpresult["Receive Timestamp"]
+  printf "This is %s\n", Time.at(ntpresult["Receive Timestamp"])
+  printf "Stratum: %d (%s)\n",
+   ntpresult["Stratum"], NET::NTP::STRATUM[ntpresult["Stratum"]]
 
 == REQUIREMENTS:
 
 == INSTALL:
 
-* sudo gem install net-ntb
+* sudo gem install net-ntp
 
 == LICENSE:
 
