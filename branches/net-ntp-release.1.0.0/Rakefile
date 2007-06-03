@@ -1,0 +1,16 @@
+# -*- ruby -*-
+
+require 'rubygems'
+require 'hoe'
+require './lib/ntp.rb'
+
+Hoe.new('ntp', NET::NTP::VERSION) do |p|
+  p.rubyforge_name = 'net-ntp'
+  p.author = 'Jerome Waibel'
+  p.summary = 'Send a packet to an NTP server and decode packet received as outlined in RFC1305 and RFC2030'
+  # p.description = p.paragraphs_of('README.txt', 2..5).join("\n\n")
+  # p.url = p.paragraphs_of('README.txt', 0).first.split(/\n/)[1..-1]
+  p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
+end
+
+# vim: syntax=Ruby
