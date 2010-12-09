@@ -3,7 +3,6 @@ require 'timeout'
 
 module Net #:nodoc:
   module NTP
-    VERSION = '1.0.0'    #:nodoc:
     TIMEOUT = 60         #:nodoc:
     NTP_ADJ = 2208988800 #:nodoc:
     NTP_FIELDS = [ :byte1, :stratum, :poll, :precision, :delay, :delay_fb,
