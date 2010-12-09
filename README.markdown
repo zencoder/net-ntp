@@ -1,27 +1,27 @@
-net-ntp
+# net-ntp
     by Jerome Waibel
     http://rubyforge.org/projects/net-ntp/
 
-== DESCRIPTION:
-  
+    revised by Nathan Sutton
+    http://github.com/zencoder/net-ntp
+
+## DESCRIPTION:
+
 Rubyfied version of perl's Net::NTP module, (C) 2004 by James G. Willmore.
 
 This module exports a single method (NET::NTP::get_ntp_response) and returns a
 hash based upon RFC1305 and RFC2030.
 
-== FEATURES/PROBLEMS:
-  
-== SYNOPSIS:
+## FEATURES/PROBLEMS:
 
-  require 'ntp'
-  
-  ntpresult = NET::NTP::get_ntp_response("de.pool.ntp.org")
-  printf "Current epoch time: %f\n", ntpresult["Receive Timestamp"]
-  printf "This is %s\n", Time.at(ntpresult["Receive Timestamp"])
-  printf "Stratum: %d (%s)\n",
-   ntpresult["Stratum"], NET::NTP::STRATUM[ntpresult["Stratum"]]
+## SYNOPSIS:
 
-== REQUIREMENTS:
+    require 'net/ntp'
+
+    Net::NTP.get("de.pool.ntp.org") # => a Net::NTP::Response object
+    Net::NTP.get.time # => A Time object
+
+## REQUIREMENTS:
 
 == INSTALL:
 
