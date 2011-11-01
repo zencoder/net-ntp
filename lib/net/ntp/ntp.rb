@@ -63,7 +63,7 @@ module Net #:nodoc:
     ###
     # Sends an NTP datagram to the specified NTP server and returns
     # a hash based upon RFC1305 and RFC2030.
-    def self.get(host="pool.ntp.org", port="ntp")
+    def self.get(host="pool.ntp.org", port="ntp", timeout=TIMEOUT)
       sock = UDPSocket.new
       sock.connect(host, port)
 
@@ -78,7 +78,7 @@ module Net #:nodoc:
       sock.flush
 
       data = nil
-      Timeout::timeout(TIMEOUT) do |t|
+      Timeout::timeout(timeout) do |t|
         data = sock.recvfrom(960)[0]
       end
 
