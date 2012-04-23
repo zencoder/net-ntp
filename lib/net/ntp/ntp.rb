@@ -99,8 +99,9 @@ module Net #:nodoc:
 
     class Response
       def initialize(raw_data)
-        @raw_data = raw_data
-        @client_time_receive = Time.new.to_i
+        @raw_data             = raw_data
+        @client_time_receive  = Time.new.to_i
+        @packet_data_by_field = nil
       end
 
       def leap_indicator
