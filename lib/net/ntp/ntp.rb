@@ -179,7 +179,7 @@ module Net #:nodoc:
     protected
 
       def packet_data_by_field #:nodoc:
-        if !@packet_data_by_field
+        if @packet_data_by_field == nil || !@packet_data_by_field
           @packetdata = @raw_data.unpack("a C3   n B16 n B16 H8   N B32 N B32   N B32 N B32");
           @packet_data_by_field = {}
           NTP_FIELDS.each do |field|
