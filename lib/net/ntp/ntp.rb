@@ -67,8 +67,7 @@ module Net #:nodoc:
       sock = UDPSocket.new
       sock.connect(host, port)
 
-      client_time_send      = Time.new.to_i
-      client_localtime      = client_time_send
+      client_localtime      = Time.now.to_f
       client_adj_localtime  = client_localtime + NTP_ADJ
       client_frac_localtime = frac2bin(client_adj_localtime)
 
