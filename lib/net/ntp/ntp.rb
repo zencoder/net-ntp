@@ -181,7 +181,7 @@ module Net #:nodoc:
 
       def packet_data_by_field #:nodoc:
         if !@packet_data_by_field
-          @packetdata = @raw_data.unpack("a C3   n B16 n B16 H8   N B32 N B32   N B32 N B32");
+          @packetdata = @raw_data.unpack("a C3   n B16 n B16 H8   N B32 N B32   N B32 N B32")
           @packet_data_by_field = {}
           NTP_FIELDS.each do |field|
             @packet_data_by_field[field] = @packetdata.shift
