@@ -105,7 +105,7 @@ module Net #:nodoc:
       end
 
       def leap_indicator
-        @leap_indicator ||= (packet_data_by_field[:byte1][0] & 0xC0) >> 6
+        @leap_indicator ||= (packet_data_by_field[:byte1].bytes.first & 0xC0) >> 6
       end
 
       def leap_indicator_text
@@ -113,11 +113,11 @@ module Net #:nodoc:
       end
 
       def version_number
-        @version_number ||= (packet_data_by_field[:byte1][0] & 0x38) >> 3
+        @version_number ||= (packet_data_by_field[:byte1].bytes.first & 0x38) >> 3
       end
 
       def mode
-        @mode ||= (packet_data_by_field[:byte1][0] & 0x07)
+        @mode ||= (packet_data_by_field[:byte1].bytes.first & 0x07)
       end
 
       def mode_text
@@ -203,7 +203,7 @@ module Net #:nodoc:
 
       def unpack_ip(stratum, tmp_ip) #:nodoc:
         if stratum < 2
-          [tmp_ip].pack("H8").unpack("A4")[0]
+          [tmp_ip].pack("H8").unpack("A4").bytes.first
         else
           ipbytes = [tmp_ip].pack("H8").unpack("C4")
           sprintf("%d.%d.%d.%d", ipbytes[0], ipbytes[1], ipbytes[2], ipbytes[3])
