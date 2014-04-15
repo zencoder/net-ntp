@@ -22,5 +22,6 @@ class Net::NTP::NTPTest < Test::Unit::TestCase
     assert result.receive_timestamp > 1179864677
     assert result.transmit_timestamp > 1179864677
     assert result.time.is_a?(Time)
+    assert result.client_time_receive > 1179864677
   end
 end

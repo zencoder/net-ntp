@@ -76,12 +76,16 @@ module Net #:nodoc:
       sock.print ntp_msg
       sock.flush
 
-      data = nil
-      Timeout::timeout(timeout) do |t|
-        data = sock.recvfrom(960)[0]
+      read, write, error = IO.select [sock], nil, nil, timeout
+      if read[0]
+        client_time_receive = Time.now.to_f
+        data, _ = sock.recvfrom(960)
+        Response.new(data, client_time_receive)
+      else
+        # For backwards compatibility we throw a Timeout error, even
+        # though the timeout is being controlled by select()
+        raise Timeout::Error
       end
-
-      Response.new(data)
     end
 
     def self.frac2bin(frac) #:nodoc:
@@ -97,9 +101,12 @@ module Net #:nodoc:
     private_class_method :frac2bin
 
     class Response
-      def initialize(raw_data)
+
+      attr_reader :client_time_receive
+      
+      def initialize(raw_data, client_time_receive)
         @raw_data             = raw_data
-        @client_time_receive  = Time.new.to_i
+        @client_time_receive  = client_time_receive
         @packet_data_by_field = nil
       end
 
