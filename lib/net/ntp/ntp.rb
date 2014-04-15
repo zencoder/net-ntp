@@ -182,6 +182,10 @@ module Net #:nodoc:
         @time ||= Time.at(receive_timestamp)
       end
 
+      # As described in http://tools.ietf.org/html/rfc958
+      def offset
+        @offset ||= (receive_timestamp - originate_timestamp + transmit_timestamp - client_time_receive) / 2.0
+      end
 
     protected
 
