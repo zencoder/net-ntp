@@ -67,8 +67,7 @@ module Net #:nodoc:
       sock = UDPSocket.new
       sock.connect(host, port)
 
-      client_time_send      = Time.new.to_i
-      client_localtime      = client_time_send
+      client_localtime      = Time.now.to_f
       client_adj_localtime  = client_localtime + NTP_ADJ
       client_frac_localtime = frac2bin(client_adj_localtime)
 
@@ -77,12 +76,16 @@ module Net #:nodoc:
       sock.print ntp_msg
       sock.flush
 
-      data = nil
-      Timeout::timeout(timeout) do |t|
-        data = sock.recvfrom(960)[0]
+      read, write, error = IO.select [sock], nil, nil, timeout
+      if read[0]
+        client_time_receive = Time.now.to_f
+        data, _ = sock.recvfrom(960)
+        Response.new(data, client_time_receive)
+      else
+        # For backwards compatibility we throw a Timeout error, even
+        # though the timeout is being controlled by select()
+        raise Timeout::Error
       end
-
-      Response.new(data)
     end
 
     def self.frac2bin(frac) #:nodoc:
@@ -98,14 +101,17 @@ module Net #:nodoc:
     private_class_method :frac2bin
 
     class Response
-      def initialize(raw_data)
+
+      attr_reader :client_time_receive
+      
+      def initialize(raw_data, client_time_receive)
         @raw_data             = raw_data
-        @client_time_receive  = Time.new.to_i
+        @client_time_receive  = client_time_receive
         @packet_data_by_field = nil
       end
 
       def leap_indicator
-        @leap_indicator ||= (packet_data_by_field[:byte1][0] & 0xC0) >> 6
+        @leap_indicator ||= (packet_data_by_field[:byte1].bytes.first & 0xC0) >> 6
       end
 
       def leap_indicator_text
@@ -113,11 +119,11 @@ module Net #:nodoc:
       end
 
       def version_number
-        @version_number ||= (packet_data_by_field[:byte1][0] & 0x38) >> 3
+        @version_number ||= (packet_data_by_field[:byte1].bytes.first & 0x38) >> 3
       end
 
       def mode
-        @mode ||= (packet_data_by_field[:byte1][0] & 0x07)
+        @mode ||= (packet_data_by_field[:byte1].bytes.first & 0x07)
       end
 
       def mode_text
@@ -176,12 +182,16 @@ module Net #:nodoc:
         @time ||= Time.at(receive_timestamp)
       end
 
+      # As described in http://tools.ietf.org/html/rfc958
+      def offset
+        @offset ||= (receive_timestamp - originate_timestamp + transmit_timestamp - client_time_receive) / 2.0
+      end
 
     protected
 
       def packet_data_by_field #:nodoc:
         if !@packet_data_by_field
-          @packetdata = @raw_data.unpack("a C3   n B16 n B16 H8   N B32 N B32   N B32 N B32");
+          @packetdata = @raw_data.unpack("a C3   n B16 n B16 H8   N B32 N B32   N B32 N B32")
           @packet_data_by_field = {}
           NTP_FIELDS.each do |field|
             @packet_data_by_field[field] = @packetdata.shift
@@ -203,7 +213,7 @@ module Net #:nodoc:
 
       def unpack_ip(stratum, tmp_ip) #:nodoc:
         if stratum < 2
-          [tmp_ip].pack("H8").unpack("A4")[0]
+          [tmp_ip].pack("H8").unpack("A4").bytes.first
         else
           ipbytes = [tmp_ip].pack("H8").unpack("C4")
           sprintf("%d.%d.%d.%d", ipbytes[0], ipbytes[1], ipbytes[2], ipbytes[3])

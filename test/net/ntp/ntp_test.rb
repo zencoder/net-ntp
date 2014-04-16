@@ -22,5 +22,25 @@ class Net::NTP::NTPTest < Test::Unit::TestCase
     assert result.receive_timestamp > 1179864677
     assert result.transmit_timestamp > 1179864677
     assert result.time.is_a?(Time)
+    assert result.client_time_receive > 1179864677
+  end
+
+  def test_offset
+    pool = "de.pool.ntp.org"
+    ntpdate_output = `ntpdate -p1 -q #{pool} 2>/dev/null`
+    skip "ntpdate not available - cannot run this test right now" unless $?.success?
+    if m = ntpdate_output.match(/offset (-?\d+\.\d+) sec/)
+      expected = Float m[1]
+      result = Net::NTP.get pool
+
+      # If I am in sync:
+      # expected -0.042687 but got 0.04379832744598389
+      # assert result.offset == expected, "expected #{expected} but got #{result.offset}"
+
+      # FIXME: Find a good way to test this is "OK", whatever that
+      # means
+    else
+      skip "ntpdate not parseable - cannot run this test right now"
+    end
   end
 end
