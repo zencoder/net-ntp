@@ -10,8 +10,8 @@ end
 
 task :default => :test
 
-require 'rake/rdoctask'
-require 'lib/net/ntp/version'
+require 'rdoc/task'
+require 'net/ntp/version'
 
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
