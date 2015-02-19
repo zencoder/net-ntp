@@ -77,14 +77,14 @@ module Net #:nodoc:
       sock.flush
 
       read, write, error = IO.select [sock], nil, nil, timeout
-      unless read.nil?
-        client_time_receive = Time.now.to_f
-        data, _ = sock.recvfrom(960)
-        Response.new(data, client_time_receive)
-      else
+      if read.nil?
         # For backwards compatibility we throw a Timeout error, even
         # though the timeout is being controlled by select()
         raise Timeout::Error
+      else
+        client_time_receive = Time.now.to_f
+        data, _ = sock.recvfrom(960)
+        Response.new(data, client_time_receive)
       end
     end
 
