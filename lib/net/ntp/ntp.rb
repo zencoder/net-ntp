@@ -77,7 +77,7 @@ module Net #:nodoc:
       sock.flush
 
       read, write, error = IO.select [sock], nil, nil, timeout
-      if read[0]
+      unless read.nil?
         client_time_receive = Time.now.to_f
         data, _ = sock.recvfrom(960)
         Response.new(data, client_time_receive)
@@ -103,7 +103,7 @@ module Net #:nodoc:
     class Response
 
       attr_reader :client_time_receive
-      
+
       def initialize(raw_data, client_time_receive)
         @raw_data             = raw_data
         @client_time_receive  = client_time_receive
