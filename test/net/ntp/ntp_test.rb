@@ -1,7 +1,7 @@
 require "test_helper"
 
 class Net::NTP::NTPTest < Test::Unit::TestCase
-  POOL = "de.pool.ntp.org"
+  POOL = "pool.ntp.org"
 
   def setup
     @result_1 = Net::NTP.get(POOL)
