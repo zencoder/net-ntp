@@ -213,7 +213,7 @@ module Net #:nodoc:
 
       def unpack_ip(stratum, tmp_ip) #:nodoc:
         if stratum < 2
-          [tmp_ip].pack("H8").unpack("A4").bytes.first
+          [tmp_ip].pack("H8").unpack("A4").first
         else
           ipbytes = [tmp_ip].pack("H8").unpack("C4")
           sprintf("%d.%d.%d.%d", ipbytes[0], ipbytes[1], ipbytes[2], ipbytes[3])
