@@ -43,6 +43,11 @@ class Net::NTP::NTPTest < Test::Unit::TestCase
     assert difference < 0.5, "Expected #{@result_2.receive_timestamp} to be about 0.1 more than #{@result_1.receive_timestamp}, but was #{difference}"
   end
 
+  def test_binding_specific_host_port
+    result = Net::NTP.get(POOL, "ntp", 10, "0.0.0.0", 12345)
+    assert result.time.is_a?(Time)
+  end
+
   def test_offset
     ntpdate_output = `ntpdate -p1 -q #{POOL} 2>/dev/null`
     omit "ntpdate not available - cannot run this test right now" unless $?.success?
