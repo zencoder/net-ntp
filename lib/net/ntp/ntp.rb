@@ -63,7 +63,7 @@ module Net #:nodoc:
     ###
     # Sends an NTP datagram to the specified NTP server and returns
     # a hash based upon RFC1305 and RFC2030.
-    def self.get(host="pool.ntp.org", port="ntp", timeout=TIMEOUT, src_host="0.0.0.0", src_port=0)
+    def self.get(host="pool.ntp.org", port="ntp", timeout=TIMEOUT, src_host="", src_port=0)
       sock = UDPSocket.new
       sock.bind(src_host, src_port)
       sock.connect(host, port)
