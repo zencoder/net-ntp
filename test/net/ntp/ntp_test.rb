@@ -1,8 +1,16 @@
 require "test_helper"
 
 class Net::NTP::NTPTest < Test::Unit::TestCase
+  POOL = "de.pool.ntp.org"
+
+  def setup
+    @result_1 = Net::NTP.get(POOL)
+    sleep 0.1
+    @result_2 = Net::NTP.get(POOL)
+  end
+
   def test_response_methods
-    result = Net::NTP.get("de.pool.ntp.org")
+    result = @result_1
 
     assert result.leap_indicator
     assert result.leap_indicator_text
@@ -25,22 +33,39 @@ class Net::NTP::NTPTest < Test::Unit::TestCase
     assert result.client_time_receive > 1179864677
   end
 
+  def test_reasonably_increasing_response
+    difference = @result_2.receive_timestamp - @result_1.receive_timestamp
+
+    # Should be about 0.1 seconds, so check that it's at least 0.01
+    assert difference > 0.01
+
+    # Should be about 0.1 seconds, so check that it's not more than 0.5
+    assert difference < 0.5, "Expected #{@result_2.receive_timestamp} to be about 0.1 more than #{@result_1.receive_timestamp}, but was #{difference}"
+  end
+
   def test_offset
-    pool = "de.pool.ntp.org"
-    ntpdate_output = `ntpdate -p1 -q #{pool} 2>/dev/null`
-    skip "ntpdate not available - cannot run this test right now" unless $?.success?
+    ntpdate_output = `ntpdate -p1 -q #{POOL} 2>/dev/null`
+    omit "ntpdate not available - cannot run this test right now" unless $?.success?
+
     if m = ntpdate_output.match(/offset (-?\d+\.\d+) sec/)
       expected = Float m[1]
-      result = Net::NTP.get pool
+      result = @result_1
 
-      # If I am in sync:
-      # expected -0.042687 but got 0.04379832744598389
-      # assert result.offset == expected, "expected #{expected} but got #{result.offset}"
+      # Expect these offsets to be very close -- within 0.5 or 5% for test purposes.
+      difference = (expected - result.offset).abs
+      percentage = (result.offset.to_f / expected)
 
-      # FIXME: Find a good way to test this is "OK", whatever that
-      # means
+      if difference < 0.5
+        # This is always fine.
+        assert true
+      elsif expected.abs < 0.0001
+        # Avoiding issues with percentage on tiny numbers, but it's not a good output.
+        assert false, "Offset was not within expected tolerance.  Expected #{expected} but got #{result.offset}."
+      else
+        assert (percentage > 0.95 && percentage < 1.05), "Offset was not within expected tolerance.  Expected #{expected} but got #{result.offset}."
+      end
     else
-      skip "ntpdate not parseable - cannot run this test right now"
+      omit "ntpdate not parseable - cannot run this test right now"
     end
   end
 end
